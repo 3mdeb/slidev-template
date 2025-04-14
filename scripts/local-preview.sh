@@ -22,4 +22,4 @@ nodeenv -p
 
 # Run Slidev preview
 npm install
-npm run dev
+npm run dev $@

@@ -1,5 +1,6 @@
 {
   "name": "mastering-uefi-and-intel-rot",
+  "keywords": ["slidev", "theme", "3mdeb"],
   "type": "module",
   "private": true,
   "scripts": {

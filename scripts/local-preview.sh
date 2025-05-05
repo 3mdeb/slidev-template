@@ -20,6 +20,9 @@ fi
 # Create Node.js virtual environment
 nodeenv -p
 
-# Run Slidev preview
+# Install dependencies
+npm add theme
 npm install
-npm run dev $@
+
+# Run Slidev preview
+npm run dev "$@"

@@ -1,8 +1,8 @@
 {
-  "name": "@slidev/theme-default",
+  "name": "slidev-theme-3mdeb",
   "version": "0.25.0",
-  "description": "Default theme for Slidev",
-  "author": "antfu <anthonyfu117@hotmail.com>",
+  "description": "3mdeb theme for Slidev",
+  "author": "",
   "license": "MIT",
   "funding": "https://github.com/sponsors/antfu",
   "homepage": "https://sli.dev",
@@ -12,9 +12,18 @@
   },
   "bugs": "https://github.com/slidevjs/themes/issues",
   "keywords": [
+    "slidev",
+    "theme",
     "slidev-theme",
-    "slidev"
+    "3mdeb"
   ],
+  "type": "module",
+  "exports": {
+    "./layouts": "./layouts",
+    "./styles": "./styles",
+    "./": "./", 
+    "./theme.config": "./theme.config.ts"
+  },
   "engines": {
     "node": ">=14.0.0",
     "slidev": ">=v0.47.0"

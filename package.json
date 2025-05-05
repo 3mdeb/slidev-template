@@ -8,9 +8,12 @@
     "export": "slidev export"
   },
   "dependencies": {
+    "@3mdeb/slidev-theme-3mdeb": "file:./theme",
     "@slidev/cli": "^0.49.24",
     "@slidev/theme-default": "latest",
     "@slidev/theme-seriph": "latest",
+    "slidev-theme-3mdeb": "file:slidev-template/theme",
+    "theme": "^0.1.0",
     "vue": "^3.4.33"
   },
   "devDependencies": {

@@ -25,10 +25,10 @@ nodeenv -p
 # Run Slidev preview
 npm install
 
-# Modify paths to look for files from the previous directory
-args=()
-for arg in "$@"; do
-  args+=("../$arg")
-done
+# Extract filepath from arguments and modify it's location
+# Only one file is supported by npm run dev, other arguments should go
+# unmodified
+filepath="../$1"
+shift
 
-npm run dev "${args[@]}"
+npm run dev "$filepath" "${args[@]}"

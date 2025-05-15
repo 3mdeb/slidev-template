@@ -25,4 +25,10 @@ nodeenv -p
 # Run Slidev preview
 npm install
 
-npm run dev ../$@
+# Modify paths to look for files from the previous directory
+args=()
+for arg in "$@"; do
+  args+=("../$arg")
+done
+
+npm run dev "${args[@]}"

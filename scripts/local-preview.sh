@@ -17,9 +17,12 @@ else
     echo "nodeenv already installed."
 fi
 
+cd slidev-template
+
 # Create Node.js virtual environment
 nodeenv -p
 
 # Run Slidev preview
 npm install
-npm run dev $@
+
+npm run dev ../$@

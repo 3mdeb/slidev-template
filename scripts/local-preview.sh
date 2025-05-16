@@ -17,9 +17,18 @@ else
     echo "nodeenv already installed."
 fi
 
+cd slidev-template
+
 # Create Node.js virtual environment
 nodeenv -p
 
 # Run Slidev preview
 npm install
-npm run dev $@
+
+# Extract filepath from arguments and modify it's location
+# Only one file is supported by npm run dev, other arguments should go
+# unmodified
+filepath="../$1"
+shift
+
+npm run dev "$filepath" "${args[@]}"

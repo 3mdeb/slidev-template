@@ -8,9 +8,6 @@ render_slides() {
     local input_file
     local range
     local output_file
-    local title
-
-    title="$2"
 
     # Remove any surrounding quotes from the variables
     input_file=${1//\"/}
@@ -24,13 +21,13 @@ render_slides() {
     escaped_file=$(printf '%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
 
     # Create temporary markdown file using the slide template
-    sed -e "s/<DAY>/$day/g" -e "s/<TITLE>/$title/g" -e "s/<SRC>/$escaped_file/g" slides-template.md > slides.md
+    sed -e "s/<SRC>/$escaped_file/g" slides-template.md > slides.md
 
     docker run -it --rm --user $(id -u):$(id -g) \
       -v "$PWD:/repo" \
       -p 8000:8000 \
       mcr.microsoft.com/playwright:v1.50.0-noble \
-      bash -c "cd /repo && npm run dev slides.md -- -o false -p 8000 --remote --force"
+      bash -c "cd /repo/slidev-template && npm run dev ../slides.md -- -o false -p 8000 --remote --force"
 
     # Clean up temporary markdown file
     rm slides.md
@@ -71,7 +68,7 @@ fi
 
 print_help() {
 cat <<EOF
-$(basename "$0") [OPTION]... [slides_filename] [title]
+$(basename "$0") [OPTION]... [slides_filename]
 EOF
 }
 
@@ -80,4 +77,4 @@ if [ $# -ne 2 ]; then
 fi
 
 # Call the function with the provided YAML file
-render_slides "$1" "$2"
+render_slides "$1"

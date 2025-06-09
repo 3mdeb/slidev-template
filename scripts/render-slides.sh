@@ -72,8 +72,8 @@ $(basename "$0") [OPTION]... [slides_filename]
 EOF
 }
 
-if [ $# -ne 2 ]; then
-  print_usage_error "Script accepts 2 positional arguments, got $#"
+if [ $# -ne 1 ]; then
+  print_usage_error "Script accepts 1 positional arguments, got $#"
 fi
 
 # Call the function with the provided YAML file

@@ -34,15 +34,12 @@ render_slides() {
 }
 
 check_dependencies() {
-  local dependencies=( yq )
-  local return_value=0
-  for dependency in "${dependencies[@]}"; do
-    if ! command -v "$dependency" >/dev/null; then
-      echo "$dependency is missing"
-      return_value=1
-    fi
-  done
-  return $return_value
+  docker run -it --rm --user $(id -u):$(id -g) \
+    -v "$PWD:/repo" \
+    -p 8000:8000 \
+    mcr.microsoft.com/playwright:v1.50.0-noble \
+    bash -c "cd /repo/slidev-template && npm install"
+  return $?
 }
 
 

@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "markdown-it-admon": "^1.0.1",
-    "playwright-chromium": "^1.46.0",
+    "playwright-chromium": "^1.50.0",
     "slidev-addon-excalidraw": "^1.0.4"
   }
 }

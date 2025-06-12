@@ -18,12 +18,13 @@ render_slides() {
     day=${filename:0:1}
 
     # Escape strings for sed
-    escaped_file=$(printf '%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
+    escaped_file=$(printf './%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
 
     # Create temporary markdown file using the slide template
     sed -e "s/<SRC>/$escaped_file/g" slides-template.md > slides.md
 
     docker run -it --rm --user $(id -u):$(id -g) \
+      -e VITE_HOST=0.0.0.0 \
       -v "$PWD:/repo" \
       -p 8000:8000 \
           mcr.microsoft.com/playwright:v1.53.0-noble \
@@ -35,6 +36,7 @@ render_slides() {
 
 check_dependencies() {
   docker run -it --rm --user $(id -u):$(id -g) \
+    -e VITE_HOST=0.0.0.0 \
     -v "$PWD:/repo" \
     -p 8000:8000 \
     mcr.microsoft.com/playwright:v1.53.0-noble \

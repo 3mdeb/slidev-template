@@ -11,17 +11,17 @@
     "@slidev/cli": "latest",
     "@slidev/theme-default": "latest",
     "@slidev/theme-seriph": "latest",
-    "vue": "^3.4.33"
+    "vue": "latest"
   },
   "devDependencies": {
-    "markdown-it-admon": "^1.0.1",
+    "markdown-it-admon": "*",
     "playwright-chromium": "^1.50.0",
-    "file-saver": "^2.0.0",
-    "lz-string": "^1.4.4",
-    "prettier": "^2.3.0",
-    "recordrtc": "^5.6.0",
-    "typescript": "^4.4.4",
-    "yaml": "^1.10.2",
-    "vite": "latest"
+    "file-saver": "*",
+    "lz-string": "*",
+    "prettier": "*",
+    "recordrtc": "*",
+    "typescript": "*",
+    "yaml": "*",
+    "vite": "*"
   }
 }

@@ -1,6 +1,8 @@
 #!/bin/bash
 # Generate cheatsheet based on YAML input
 
+set -e
+
 gen_slides() {
     local day
     local escaped_file
@@ -28,11 +30,9 @@ gen_slides() {
 
         cat slides.md
 
-        docker run -it --rm --user $(id -u):$(id -g) \
-          -v "$PWD:/repo" \
-          -p 8000:8000 \
-          mcr.microsoft.com/playwright:v1.53.2-noble \
-          bash -c "cd /repo/slidev-template && npm run export ../slides.md -- --range $range --output output/$output_file -c"
+        cd slidev-template
+        npm run export ../slides.md -- --range $range --output output/$output_file -c
+        cd ..
 
         # Clean up temporary markdown file
         rm slides.md
@@ -40,12 +40,7 @@ gen_slides() {
 }
 
 check_dependencies() {
-  docker run -it --rm --user $(id -u):$(id -g) \
-    -v "$PWD:/repo" \
-    -p 8000:8000 \
-    mcr.microsoft.com/playwright:v1.53.2-noble \
-    bash -c "cd /repo/slidev-template && npm install"
-  return $?
+  cd slidev-template && npm install && cd ..
 }
 
 

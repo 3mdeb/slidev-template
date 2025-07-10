@@ -31,7 +31,7 @@ gen_slides() {
         docker run -it --rm --user $(id -u):$(id -g) \
           -v "$PWD:/repo" \
           -p 8000:8000 \
-          mcr.microsoft.com/playwright:v1.53.0-noble \
+          mcr.microsoft.com/playwright:v1.53.2-noble \
           bash -c "cd /repo/slidev-template && npm run export ../slides.md -- --range $range --output output/$output_file -c"
 
         # Clean up temporary markdown file
@@ -43,7 +43,7 @@ check_dependencies() {
   docker run -it --rm --user $(id -u):$(id -g) \
     -v "$PWD:/repo" \
     -p 8000:8000 \
-    mcr.microsoft.com/playwright:v1.53.0-noble \
+    mcr.microsoft.com/playwright:v1.53.2-noble \
     bash -c "cd /repo/slidev-template && npm install"
   return $?
 }

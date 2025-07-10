@@ -24,7 +24,7 @@ gen_slides() {
         escaped_file=$(printf '%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
 
         # Create temporary markdown file using the slide template
-        sed -e "s/<SRC>/$escaped_file/g" slides-template.md > slides.md
+        sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" slides-template.md > slides.md
 
         cat slides.md
 

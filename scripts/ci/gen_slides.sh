@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # Generate cheatsheet based on YAML input
 
 gen_slides() {
@@ -65,20 +65,52 @@ print_error() {
   echo -e "${red}ERROR: $1${reset}"
 }
 
-if ! check_dependencies; then
-  error_exit "Missing dependencies"
-fi
-
 print_help() {
 cat <<EOF
-$(basename "$0") [OPTION]... [slides_metadata]
+$(basename "$0") [OPTION]... <slides_metadata>
+Generates slides based on slides metadata file
+Options:
+  -v|--verbose              Enable trace output
+  -h|--help                 Print this help
 EOF
 }
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      -v|--verbose)
+        set -x
+        shift
+        ;;
+      -h|--help)
+        print_help
+        exit 0
+        ;;
+      -*)
+        print_usage_error "Unknown option $1"
+        ;;
+      *)
+        POSITIONAL_ARGS+=( "$1" )
+        shift
+        ;;
+    esac
+  done
+}
+
+parse_args "$@"
+set -- "${POSITIONAL_ARGS[@]}"
 
 if [ $# -ne 1 ]; then
   print_usage_error "Script accepts 1 positional arguments, got $#"
 fi
 
+if [ ! -f "$1" ]; then
+  error_exit "$1 doesn't exist"
+fi
+
+if ! check_dependencies; then
+  error_exit "Missing dependencies"
+fi
+
 # Call the function with the provided YAML file
 gen_slides "$1"
-

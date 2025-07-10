@@ -21,13 +21,13 @@ render_slides() {
     escaped_file=$(printf './%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
 
     # Create temporary markdown file using the slide template
-    sed -e "s/<SRC>/$escaped_file/g" slides-template.md > slides.md
+    sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" slides-template.md > slides.md
 
     docker run -it --rm --user $(id -u):$(id -g) \
       -e VITE_HOST=0.0.0.0 \
       -v "$PWD:/repo" \
       -p 8000:8000 \
-          mcr.microsoft.com/playwright:v1.53.0-noble \
+          mcr.microsoft.com/playwright:v1.53.2-noble \
       bash -c "cd /repo/slidev-template && npm run dev ../slides.md -- -o false -p 8000 --remote --force"
 
     # Clean up temporary markdown file
@@ -39,7 +39,7 @@ check_dependencies() {
     -e VITE_HOST=0.0.0.0 \
     -v "$PWD:/repo" \
     -p 8000:8000 \
-    mcr.microsoft.com/playwright:v1.53.0-noble \
+    mcr.microsoft.com/playwright:v1.53.2-noble \
     bash -c "cd /repo/slidev-template && npm install"
   return $?
 }
@@ -61,18 +61,51 @@ print_error() {
   echo -e "${red}ERROR: $1${reset}"
 }
 
-if ! check_dependencies; then
-  error_exit "Missing dependencies"
-fi
-
 print_help() {
 cat <<EOF
-$(basename "$0") [OPTION]... [slides_filename]
+$(basename "$0") [OPTION]... <slide_file>
+Generates slides
+Options:
+  -v|--verbose              Enable trace output
+  -h|--help                 Print this help
 EOF
 }
 
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      -v|--verbose)
+        set -x
+        shift
+        ;;
+      -h|--help)
+        print_help
+        exit 0
+        ;;
+      -*)
+        print_usage_error "Unknown option $1"
+        ;;
+      *)
+        POSITIONAL_ARGS+=( "$1" )
+        shift
+        ;;
+    esac
+  done
+}
+
+parse_args "$@"
+set -- "${POSITIONAL_ARGS[@]}"
+
 if [ $# -ne 1 ]; then
   print_usage_error "Script accepts 1 positional arguments, got $#"
+fi
+
+if [ ! -f "$1" ]; then
+  error_exit "$1 doesn't exist"
+fi
+
+if ! check_dependencies; then
+  error_exit "Missing dependencies"
 fi
 
 # Call the function with the provided YAML file

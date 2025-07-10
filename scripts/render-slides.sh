@@ -6,8 +6,6 @@ render_slides() {
     local escaped_file
     local filename
     local input_file
-    local range
-    local output_file
 
     # Remove any surrounding quotes from the variables
     input_file=${1//\"/}

@@ -9,27 +9,27 @@ render_slides() {
 
     # Remove any surrounding quotes from the variables
     input_file=${1//\"/}
-
+    input_file="slides/$(realpath --relative-to slidev-template/slides/ "$input_file")"
     # Derive other necessary variables from the input_file
     filename=$(basename "$input_file")
     filename=${filename%.*}
     day=${filename:0:1}
 
     # Escape strings for sed
-    escaped_file=$(printf './%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
+    escaped_file=$(printf '%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
 
     # Create temporary markdown file using the slide template
-    sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" slides-template.md > slides.md
+    sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" slides-template.md >slidev-template/slides.md
 
     docker run -it --rm --user $(id -u):$(id -g) \
       -e VITE_HOST=0.0.0.0 \
       -v "$PWD:/repo" \
       -p 8000:8000 \
           mcr.microsoft.com/playwright:v1.53.2-noble \
-      bash -c "cd /repo/slidev-template && npm run dev ../slides.md -- -o false -p 8000 --remote --force"
+      bash -c "cd /repo/slidev-template && npm run dev slides.md -- -o false -p 8000 --remote --force"
 
     # Clean up temporary markdown file
-    rm slides.md
+    rm slidev-template/slides.md
 }
 
 check_dependencies() {
@@ -104,6 +104,14 @@ fi
 
 if ! check_dependencies; then
   error_exit "Missing dependencies"
+fi
+
+if [ -L "slidev-template/slides" ]; then
+  unlink slidev-template/slides
+fi
+
+if ! ln -sr . slidev-template/slides; then
+  error_exit "Couldn't create slidev-template/slides symlink"
 fi
 
 # Call the function with the provided YAML file

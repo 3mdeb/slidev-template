@@ -30,9 +30,20 @@ gen_slides() {
 
         cat slides.md
 
-        cd slidev-template
-        npm run export ../slides.md -- --range $range --output output/$output_file -c
-        cd ..
+        if [ -n "$USE_DOCKER" ]; then
+          docker run -it --rm --user $(id -u):$(id -g) \
+            -v "$PWD:/repo" \
+            -p 8000:8000 \
+            mcr.microsoft.com/playwright:v1.53.2-noble \
+            bash -c "
+              cd /repo/slidev-template && npm run export ../slides.md -- \
+                --range $range --output output/$output_file -c
+            "
+        else
+          cd slidev-template
+          npm run export ../slides.md -- --range $range --output output/$output_file -c
+          cd ..
+        fi
 
         # Clean up temporary markdown file
         rm slides.md
@@ -40,7 +51,15 @@ gen_slides() {
 }
 
 check_dependencies() {
-  cd slidev-template && npm install && cd ..
+  if [ -n "$USE_DOCKER" ]; then
+    docker run -it --rm --user $(id -u):$(id -g) \
+      -v "$PWD:/repo" \
+      -p 8000:8000 \
+      mcr.microsoft.com/playwright:v1.53.2-noble \
+      bash -c "cd /repo/slidev-template && npm install"
+  else
+    cd slidev-template && npm install && cd ..
+  fi
 }
 
 
@@ -65,6 +84,7 @@ cat <<EOF
 $(basename "$0") [OPTION]... <slides_metadata>
 Generates slides based on slides metadata file
 Options:
+  --no-container            Run npm directly, not in container
   -v|--verbose              Enable trace output
   -h|--help                 Print this help
 EOF
@@ -73,6 +93,10 @@ EOF
 parse_args() {
   while [[ $# -gt 0 ]]; do
     case $1 in
+      --no-container)
+        USE_DOCKER=
+        shift
+        ;;
       -v|--verbose)
         set -x
         shift
@@ -92,6 +116,7 @@ parse_args() {
   done
 }
 
+USE_DOCKER="Y"
 parse_args "$@"
 set -- "${POSITIONAL_ARGS[@]}"
 

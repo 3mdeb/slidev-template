@@ -26,6 +26,14 @@ root="$(realpath "$(dirname "$0")")/.."
 # Go to root of slidev-template repository
 cd "$root"
 
+if [ -L slides ]; then
+    unlink slides
+fi
+
+ln -sr .. slides
+# change path to e.g. './slides/<filepath>' format
+filepath="slides/$(realpath --relative-to slides/ "$filepath")"
+
 # Create Node.js virtual environment
 nodeenv -p
 

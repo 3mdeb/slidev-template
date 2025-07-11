@@ -7,6 +7,9 @@ export default defineConfig({
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',
       'Cross-Origin-Embedder-Policy': 'require-corp',
-    }
-  }
+    },
+    watch: {
+      ignored: [path.resolve(__dirname, '../slides/slidev-template')]
+    },
+  },
 })

@@ -20,9 +20,9 @@ render_slides() {
 
     # Create temporary markdown file using the slide template
     sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" slides-template.md >slidev-template/slides.md
+    cp slidev-template/vite.config.ts .
 
     docker run -it --rm --user $(id -u):$(id -g) \
-      -e VITE_HOST=0.0.0.0 \
       -v "$PWD:/repo" \
       -p 8000:8000 \
           mcr.microsoft.com/playwright:v1.53.2-noble \
@@ -30,11 +30,11 @@ render_slides() {
 
     # Clean up temporary markdown file
     rm slidev-template/slides.md
+    rm vite.config.ts
 }
 
 check_dependencies() {
   docker run -it --rm --user $(id -u):$(id -g) \
-    -e VITE_HOST=0.0.0.0 \
     -v "$PWD:/repo" \
     -p 8000:8000 \
     mcr.microsoft.com/playwright:v1.53.2-noble \

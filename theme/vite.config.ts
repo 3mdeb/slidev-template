@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
+import type { UserConfig } from 'vite'
 import path from 'path'
 
-export default defineConfig({
+const config: UserConfig = {
   publicDir: path.resolve(__dirname, '../public'),
   server: {
     headers: {
@@ -12,4 +12,6 @@ export default defineConfig({
       ignored: [path.resolve(__dirname, '../slides/slidev-template')]
     },
   },
-})
+}
+
+export default config

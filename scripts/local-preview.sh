@@ -17,7 +17,22 @@ else
     echo "nodeenv already installed."
 fi
 
-cd slidev-template
+# Extract filepath from arguments and modify it's location
+# Only one file is supported by npm run dev, other arguments should go
+# unmodified
+filepath="$(realpath $1)"
+root="$(realpath "$(dirname "$0")")/.."
+
+# Go to root of slidev-template repository
+cd "$root"
+
+if [ -L slides ]; then
+    unlink slides
+fi
+
+ln -sr .. slides
+# change path to e.g. './slides/<filepath>' format
+filepath="slides/$(realpath --relative-to slides/ "$filepath")"
 
 # Create Node.js virtual environment
 nodeenv -p
@@ -25,10 +40,6 @@ nodeenv -p
 # Run Slidev preview
 npm install
 
-# Extract filepath from arguments and modify it's location
-# Only one file is supported by npm run dev, other arguments should go
-# unmodified
-filepath="../$1"
 shift
 
 npm run dev "$filepath" "${args[@]}"

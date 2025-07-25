@@ -1,33 +1,88 @@
 # Welcome to [Slidev](https://github.com/slidevjs/slidev)!
 
-## Local-preview
+## Preparation
 
-1. Use `local-preview.sh`
+This repository is supposed to be used as a submodule to repository with slides.
+Minimal slides repository structure should look like this
 
-```bash
-./scripts/local-preview.sh [path/to/sldies.md]
+```text
+slides
+├── slides.metadata
+├── slides-template.md
+└── slidev-template
 ```
 
-or run steps manually. To start the slide show locally from scratch:
+With `slides.metadata` and `slides-template.md` copied from this repository.
+`slides-template.md` is used by `render-slides.sh` and `gen_slides.sh` scripts
+and needs to be modified before use. You need to, at minimum, replace `<TITLE>`.
+There are 2 other variables, that are replaced dynamically by scripts:
 
-- `npm install`
-- `npm run dev [path/to/sldies.md]`
+- `<DAY>` - replaced with first character in slide filename e.g. `1-slides.md`
+  would result in `<DAY>` being replaced with `1`. You can remove line
+  containing this variable if you don't need it.
+- `<SRC>` - path to slide we are trying to render.
 
-> By default local `slides.md` is used, however, oen can optionally point to
-> an external `slides.md` file, outside of this repository (recommended).
+`slides.metadata` is a `yaml` file containing information needed for slides
+generation and is needed by `gen_slides.sh` script.
 
-1. The browser should open automatically. If not, use `o` shortcut or open
-   slides at: <http://localhost:3030>.
+Example:
 
-2. Edit the [slides.md](./slides.md) to render other slides/training modules.
-   Use `Ctrl+Shift+R` to hard reload the page bypassing the cached resources.
+```yml
+slides:
+  - input_file: "path/to/slides.md"
+    range: "1-10"
+    output_file: "1.pdf"
+  - input_file: "path/to/presentation.md"
+    range: "3-"
+    output_file: "2.pdf"
+```
 
-> Note: To start the slide show with remote access on port 8088:
-> 
-> - `npm run dev -- -p 8088 --remote`
+- `input_file` - path to `.md` file you want to convert to PDF
+- `range` - which pages to include. Leave empty to include all pages
+- `output_file` - output PDF filename.
 
-Learn more about Slidev at the [documentation](https://sli.dev/).
+## Relative paths
 
-## Automated workflow
+Make sure to use relative paths in slides e.g. `../img/` instead of `/img` as
+scripts run `slidev` from `slidev-template` directory.
 
-Script is integrated into `scripts/render-slides.sh`.
+## Local preview
+
+Usage:
+
+```sh
+./slidev-template/scripts/render-slides.sh <path/to/slides.md>
+```
+
+Example:
+
+```text
+./slidev-template/scripts/render-slides.sh pages/presentation.md
+(...)
+  ●■▲
+  Slidev  v52.0.0
+
+  theme       ./theme
+  css engine  unocss
+  entry       /repo/slidev-template/slides.md
+
+  public slide show   > http://localhost:8000/
+  presenter mode      > http://localhost:8000/presenter/
+  slides overview     > http://localhost:8000/overview/
+  export slides       > http://localhost:8000/export/
+  remote control      > http://172.17.0.3:8000/entry/
+
+  shortcuts           > restart | open | edit | quit | qrcode
+```
+
+You can then open given links to e.g. preview your presentation.
+
+## Export presentation
+
+To export slides to PDF use
+
+```sh
+./slidev-template/scripts/ci/gen_slides.sh <path/to/slides.metadata>
+```
+
+Generated slides will be in `slidev-template/output` directory.

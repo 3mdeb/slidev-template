@@ -397,11 +397,9 @@ li {
 }
 
 .footnote {
-    bottom: 9em;
-    font-size: 10px;
-    left: 4em;
     position: absolute;
-    right: 4em;
+    bottom: 0px;
+    margin-bottom: 20px;
 }
 
 .hljs-default .hljs, .hljs-default .hljs-subst {

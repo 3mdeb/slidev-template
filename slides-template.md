@@ -13,6 +13,7 @@ drawings:
 transition: slide-left
 # enable MDC Syntax: https://sli.dev/features/mdc
 mdc: true
+copyright: <COPYRIGHT>
 ---
 
 ## <TITLE>

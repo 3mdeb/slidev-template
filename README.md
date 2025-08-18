@@ -77,6 +77,16 @@ Example:
 
 You can then open given links to e.g. preview your presentation.
 
+You can override the default copyright string using an `COPYRIGHT`
+environment variable:
+
+```bash
+COPYRIGHT="All Rights Reserved by 3mdeb Sp. z o.o." \
+  ./slidev-template/scripts/render-slides.sh <path/to/slides.md>
+```
+
+Default copyright is `3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0`.
+
 ## Export presentation
 
 To export slides to PDF use
@@ -86,3 +96,13 @@ To export slides to PDF use
 ```
 
 Generated slides will be in `slidev-template/output` directory.
+
+You can override the default copyright string using an `COPYRIGHT`
+environment variable:
+
+```bash
+COPYRIGHT="All Rights Reserved by 3mdeb Sp. z o.o." \
+  ./slidev-template/scripts/ci/gen_slides.sh <path/to/slides.metadata>
+```
+
+Default copyright is `3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0`.

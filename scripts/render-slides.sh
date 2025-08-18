@@ -14,12 +14,15 @@ render_slides() {
     filename=$(basename "$input_file")
     filename=${filename%.*}
     day=${filename:0:1}
+    copyright=${COPYRIGHT:-3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0}
+    copyright=${copyright//\"/}
 
     # Escape strings for sed
     escaped_file=$(printf '%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
 
     # Create temporary markdown file using the slide template
-    sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" slides-template.md >slidev-template/slides.md
+    sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" -e "s/<COPYRIGHT>/$copyright/g" \
+      slides-template.md >slidev-template/slides.md
     cp slidev-template/vite.config.ts .
 
     docker run -it --rm --user $(id -u):$(id -g) \

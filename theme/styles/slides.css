@@ -299,63 +299,49 @@ ul ul{
     margin-left: 1em;
 }
 
-.pure-table thead {
+thead {
   background-color: #3D3D3D !important;
   color: #ebebeb;
   text-align: left;
   vertical-align: bottom;
   font-family:"montserratLight" ,sans-serif;
 }
-.th{
-  padding-top:9px!important;
-  padding-bottom:9px!important;
-}
-.pure-table td {
+
+td {
   border-left: 1px solid #E2E2E2 !important;
   border-left-width: 1px;
   border-width: 0 0 0 1px;
   border-left-width: 1px;
+  border-bottom: 1px solid #cbcbcb;
   font-size: 11px !important;
   margin: 0;
   overflow: visible;
   padding: 0.5em 0.6em !important;
 }
-.pure-table th {
+
+th {
   border-left: 1px solid #3D3D3D !important;
   border-left-width: 1px;
   border-width: 0 0 0 1px;
   border-left-width: 1px;
+  border-bottom: 1px solid #cbcbcb;
   font-size: 10px !important;
   margin: 0;
   overflow: visible;
   padding: 0.4em 0.8em !important;
 }
-.pure-table {
-  border:0px !important;
-}
-.pure-table table tbody{
+
+table tbody{
   border-collapse: collapse;
   border-spacing: 0;
   empty-cells: show;
   border: 1px solid #E2E2E2 !important;
 }
-.pure-table-bordered td {
-  border-bottom: 1px solid #cbcbcb;
-}
-.pure-table td, .pure-table th {
-  border-left: 1px solid #cbcbcb;
-  border-left-width: 1px;
-  border-width: 0 0 0 1px;
-  border-bottom-width: 0px;
-  border-left-width: 1px;
-  font-size: inherit;
-  margin: 0;
-  overflow: visible;
-  padding: .5em 1em;
-}
-.pure-table-striped tr:nth-child(2n-1) td {
+
+tr:nth-child(2n-1) td {
   background-color: #f2f2f2;
 }
+
 .flag-true{
   width:15px;
   height:15px;
@@ -366,6 +352,7 @@ ul ul{
   background-position:center center;
   background-repeat:no-repeat;
 }
+
 .flag-false{
   margin-left:auto;
   margin-right:auto;

@@ -11,7 +11,8 @@
     "@slidev/cli": "latest",
     "@slidev/theme-default": "latest",
     "@slidev/theme-seriph": "latest",
-    "vue": "latest"
+    "vue": "latest",
+    "@olzhas-adiyatov/slidev-addon-asciinema": "latest"
   },
   "devDependencies": {
     "markdown-it-admon": "*",
@@ -23,5 +24,8 @@
     "typescript": "*",
     "yaml": "*",
     "vite": "*"
+  },
+  "slidev": {
+    "addons": ["@olzhas-adiyatov/slidev-addon-asciinema"]
   }
 }

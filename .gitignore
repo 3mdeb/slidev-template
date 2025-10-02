@@ -11,3 +11,5 @@ venv
 output
 tmp.*
 slides
+core
+vite.config.ts

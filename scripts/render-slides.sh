@@ -24,13 +24,6 @@ render_slides() {
       error_exit "$input_arg doesn't exist"
     fi
 
-    title=$(awk 'BEGIN{in_frontmatter=0} \
-      /^---[\r\n]*$/ { if (in_frontmatter) exit; in_frontmatter=1; next } \
-      in_frontmatter && /^title:[[:space:]]*/ { sub(/^title:[[:space:]]*/,"",$0); print; exit }' "$input_file_abs")
-    if [ -z "$title" ]; then
-      title="3mdeb Presentation"
-    fi
-
     input_file_rel=$(realpath --relative-to "$PWD/slidev-template" "$input_file_abs")
     if [ -z "$input_file_rel" ]; then
       error_exit "Couldn't compute relative path for $input_file_abs"
@@ -40,6 +33,8 @@ render_slides() {
     filename=$(basename "$input_file_abs")
     filename=${filename%.*}
     day=${filename:0:1}
+    title=${SLIDES_TITLE:-3mdeb Presentation}
+    title=${title//\"/}
     copyright=${COPYRIGHT:-3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0}
     copyright=${copyright//\"/}
 
@@ -120,6 +115,12 @@ Generates slides
 Options:
   -v|--verbose              Enable trace output
   -h|--help                 Print this help
+
+Environment Variables:
+  SLIDES_TITLE              Title for the presentation (default: 3mdeb Presentation)
+  SLIDEV_PORT               Port for dev server (default: 8000)
+  SLIDEV_NODE_MAX_OLD_SPACE Node.js max old space size in MB (default: 4096)
+  COPYRIGHT                 Copyright string for footer (default: 3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0)
 EOF
 }
 
@@ -154,6 +155,15 @@ fi
 
 if ! check_dependencies; then
   error_exit "Missing dependencies"
+fi
+
+# Create symlink for slides to access parent directory resources (images, etc.)
+if [ -L "slidev-template/slides" ]; then
+  unlink slidev-template/slides
+fi
+
+if ! ln -sr . slidev-template/slides; then
+  error_exit "Couldn't create slidev-template/slides symlink"
 fi
 
 # Call the function with the provided YAML file

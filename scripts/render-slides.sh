@@ -153,6 +153,10 @@ if [ $# -ne 1 ]; then
   print_usage_error "Script accepts 1 positional arguments, got $#"
 fi
 
+if [ ! -f "$1" ]; then
+  error_exit "$1 doesn't exist"
+fi
+
 if ! check_dependencies; then
   error_exit "Missing dependencies"
 fi

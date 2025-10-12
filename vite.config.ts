@@ -8,6 +8,30 @@ export default defineConfig({
     // all hosts are allowed
     allowedHosts: true,
     fs: { strict: false },
+    hmr: {
+      overlay: false,
+    },
+    watch: {
+      // Let Vite auto-detect polling mode.
+      // Explicitly setting usePolling: false breaks HMR on Docker Desktop
+      // (macOS/Windows) and NFS mounts where inotify events don't propagate.
+      ignored: ['**/slides/tools/**', '**/slides/slidev-template/**'],
+    },
+  },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
+  },
+  optimizeDeps: {
+    exclude: ['@slidev/cli'],
   },
   slidev: {
     vue: {

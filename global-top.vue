@@ -12,7 +12,7 @@
       >
       <small v-else class="mx-auto"></small>
       
-      <small class="mr-4"><SlideCurrentNo/>/<SlidesTotal/></small>
+      <small class="mr-4">{{ $nav.currentPage }}/<SlidesTotal/></small>
     </footer>
   </div>
 </template>

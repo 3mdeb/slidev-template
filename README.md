@@ -106,3 +106,20 @@ COPYRIGHT="All Rights Reserved by 3mdeb Sp. z o.o." \
 ```
 
 Default copyright is `3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0`.
+
+## Features
+
+A set of common styles we should be following.
+
+### Images
+
+Use `figure` class, and `figcaption` class if image comes from an external source.
+
+```
+<figure>
+  <img src="/@fs/repo/img/arch5141/bsf_uefi_event_log.png" width="800px">
+  <figcaption>
+    "Building Secure Firmware", Jiewen Yao, Vincent Zimmer, 2020
+  </figcaption>
+</figure>
+```

@@ -466,17 +466,41 @@ a {
 
 figure {
     border: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 figure img {
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 0;
+    display: block;
+}
+
+figure p {
+    margin: 0;
+    padding: 0;
 }
 
 figcaption {
   color: gray;
   font-style: italic;
-  font-size: 14px;
-  padding: 2px;
+  font-size: 12px;
+  padding: 0;
+  margin-top: 2px;
   text-align: center;
+}
+
+/* Fix for center tag to ensure top alignment */
+center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Adjust layout: reduce top padding to start content higher, add bottom for footer */
+.slidev-layout {
+    padding-top: 0.5rem;
+    padding-bottom: 2.5rem;
 }

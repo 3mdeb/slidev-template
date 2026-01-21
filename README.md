@@ -43,8 +43,21 @@ slides:
 
 ## Relative paths
 
-Make sure to use relative paths in slides e.g. `../img/` instead of `/img` as
-scripts run `slidev` from `slidev-template` directory.
+Scripts run `slidev` from the `slidev-template` directory and create a symlink
+at `slidev-template/slides` pointing to your presentation repository. This
+enables consistent path handling:
+
+- `/` maps to the `slidev-template` directory
+- `/slides/` maps to your presentation repository (parent of `slidev-template`)
+
+**Recommended**: Use `/slides/` prefix for all asset paths in your slides:
+
+```markdown
+![Logo](/slides/img/logo.png)
+```
+
+This approach works reliably regardless of the slide file's location within
+your presentation repository.
 
 ## Local preview
 

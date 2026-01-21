@@ -6,10 +6,15 @@ set -e
 gen_slides() {
     local day
     local escaped_file
+    local escaped_title
     local filename
     local input_file
+    local input_file_abs
+    local input_file_rel
+    local node_max_old_space
     local range
     local output_file
+    local title
 
     # Extract slide information from YAML using yq with pipe as a separator
     IFS=$'\n' # Set Internal Field Separator to newline for reading line by line
@@ -18,25 +23,42 @@ gen_slides() {
         IFS='|' read -r input_file range output_file <<< "$entry"
 
         # Derive other necessary variables from the input_file
-        filename=$(basename "$input_file")
+        if ! input_file_abs=$(realpath "$input_file"); then
+          error_exit "Could not resolve path for $input_file"
+        fi
+
+        if [ ! -f "$input_file_abs" ]; then
+          error_exit "$input_file doesn't exist"
+        fi
+
+        input_file_rel=$(realpath --relative-to "$PWD/slidev-template" "$input_file_abs")
+        if [ -z "$input_file_rel" ]; then
+          error_exit "Couldn't compute relative path for $input_file_abs"
+        fi
+
+        filename=$(basename "$input_file_abs")
         filename=${filename%.*}
         day=${filename:0:1}
+        title=${SLIDES_TITLE:-3mdeb Presentation}
+        title=${title//\"/}
         copyright=${COPYRIGHT:-3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0}
         copyright=${copyright//\"/}
 
         # Escape strings for sed
-        escaped_file=$(printf 'slides/%s\n' "$input_file" | sed -e 's/[\/&$]/\\&/g')
+        escaped_file=$(printf '%s\n' "$input_file_rel" | sed -e 's/[\/&$]/\\&/g')
+        escaped_title=$(printf '%s\n' "$title" | sed -e 's/[\/&$]/\\&/g')
 
         # Create temporary markdown file using the slide template
-        sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" -e "s/<COPYRIGHT>/$copyright/g" \
+        sed -e "s/<SRC>/$escaped_file/g" -e "s/<DAY>/$day/g" -e "s/<COPYRIGHT>/$copyright/g" -e "s/<TITLE>/$escaped_title/g" \
           slides-template.md >slidev-template/slides.md
 
         cat slidev-template/slides.md
 
+        node_max_old_space=${SLIDEV_NODE_MAX_OLD_SPACE:-4096}
         if [ -n "$USE_DOCKER" ]; then
           docker run -it --rm --user $(id -u):$(id -g) \
             -v "$PWD:/repo" \
-            -p 8000:8000 \
+            -e NODE_OPTIONS=--max-old-space-size="$node_max_old_space" \
             mcr.microsoft.com/playwright:v1.53.2-noble \
             bash -c "
               cd /repo/slidev-template && npm run export slides.md -- \
@@ -57,7 +79,6 @@ check_dependencies() {
   if [ -n "$USE_DOCKER" ]; then
     docker run -it --rm --user $(id -u):$(id -g) \
       -v "$PWD:/repo" \
-      -p 8000:8000 \
       mcr.microsoft.com/playwright:v1.53.2-noble \
       bash -c "cd /repo/slidev-template && npm install"
   else
@@ -90,6 +111,11 @@ Options:
   --no-container            Run npm directly, not in container
   -v|--verbose              Enable trace output
   -h|--help                 Print this help
+
+Environment Variables:
+  SLIDES_TITLE              Title for the presentation (default: 3mdeb Presentation)
+  SLIDEV_NODE_MAX_OLD_SPACE Node.js max old space size in MB (default: 4096)
+  COPYRIGHT                 Copyright string for footer (default: 3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0)
 EOF
 }
 
@@ -135,11 +161,14 @@ if ! check_dependencies; then
   error_exit "Missing dependencies"
 fi
 
+# Create symlink for slides to access parent directory resources (images, etc.)
 if [ -L "slidev-template/slides" ]; then
   unlink slidev-template/slides
 fi
 
-ln -sr . slidev-template/slides
+if ! ln -sr . slidev-template/slides; then
+  error_exit "Couldn't create slidev-template/slides symlink"
+fi
 
 # Call the function with the provided YAML file
 gen_slides "$1"

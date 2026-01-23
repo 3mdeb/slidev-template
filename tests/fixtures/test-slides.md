@@ -163,6 +163,31 @@ Images are often wrapped in `<center>` tags in real slides.
 Testing that public assets load correctly from /public/ directory.
 
 ---
+
+# Font Size Classes
+
+<div class="code-10px">
+
+```bash
+# 10px font size for dense code
+CONFIG_OPTION_1=value
+CONFIG_OPTION_2=value
+```
+
+</div>
+
+<div class="code-12px">
+
+```bash
+# 12px font size for normal code
+echo "Standard code block"
+```
+
+</div>
+
+Testing `.code-10px` and `.code-12px` CSS classes for code blocks.
+
+---
 layout: cover
 background: /intro.png
 ---

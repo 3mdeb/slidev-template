@@ -75,7 +75,7 @@ PY
       -v "$PWD:/repo" \
       -p "$slidev_port":8000 \
       -e NODE_OPTIONS=--max-old-space-size="$node_max_old_space" \
-          mcr.microsoft.com/playwright:v1.53.2-noble \
+          mcr.microsoft.com/playwright:v1.57.0-noble \
       bash -c "cd /repo/slidev-template && npm run dev slides.md -- -o false -p 8000 --remote --force"
 
     # Clean up temporary markdown file
@@ -86,7 +86,7 @@ PY
 check_dependencies() {
   docker run -it --rm --user $(id -u):$(id -g) \
     -v "$PWD:/repo" \
-    mcr.microsoft.com/playwright:v1.53.2-noble \
+    mcr.microsoft.com/playwright:v1.57.0-noble \
     bash -c "cd /repo/slidev-template && npm install"
   return $?
 }

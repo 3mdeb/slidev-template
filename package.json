@@ -5,7 +5,9 @@
   "scripts": {
     "build": "slidev build",
     "dev": "slidev --open",
-    "export": "slidev export"
+    "export": "slidev export",
+    "test": "playwright test",
+    "test:update-snapshots": "playwright test --update-snapshots"
   },
   "dependencies": {
     "@slidev/cli": "latest",
@@ -15,8 +17,9 @@
     "@olzhas-adiyatov/slidev-addon-asciinema": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "1.57.0",
     "markdown-it-admon": "*",
-    "playwright-chromium": "^1.50.0",
+    "playwright-chromium": "1.57.0",
     "file-saver": "*",
     "lz-string": "*",
     "prettier": "*",

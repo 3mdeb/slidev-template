@@ -40,19 +40,6 @@ h1, h2, h3 {
     color:#2BBA47;
 }
 
-.remark-slide-content h1{
-    font-size: 30px;
-    position: fixed;
-    right: 30px;
-    top: 12px;
-    max-width: 800px;
-
-}
-
-.remark-slide-content h3{
-    font-size:25px;
-}
-
 .intro h3{
     color:#fff;
 }
@@ -117,46 +104,60 @@ h1, h2, h3 {
 .image-10 img {
     width: 10%;
 }
-.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono' }
-
-.small-code .remark-code-line {
-    font-size: 10px;
+code, pre code {
+    font-family: 'Ubuntu Mono', monospace;
 }
 
-.code-11px .remark-code-line {
-    font-size: 11px;
+.code-8px pre,
+.code-8px pre code,
+.code-8px code {
+    font-size: 8px !important;
+    line-height: 1.4 !important;
 }
 
-.code-12px .remark-code-line {
-    font-size: 12px;
+.code-9px pre,
+.code-9px pre code,
+.code-9px code {
+    font-size: 9px !important;
+    line-height: 1.4 !important;
 }
 
-.code-13px .remark-code-line {
-    font-size: 13px;
+.code-10px pre,
+.code-10px pre code,
+.code-10px code {
+    font-size: 10px !important;
+    line-height: 1.4 !important;
 }
 
-.code-15px .remark-code-line {
-    font-size: 15px;
+.code-11px pre,
+.code-11px pre code,
+.code-11px code {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
 }
 
-.medium-code .remark-code-line {
-    font-size: 16px;
+.code-12px pre,
+.code-12px pre code,
+.code-12px code {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+}
+
+.code-13px pre,
+.code-13px pre code,
+.code-13px code {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
 }
 
 .diff-code {
     margin-left: -40px;
 }
 
-.diff-code .remark-code-line {
-    font-size: 14px;
-}
-
-.mem-code .remark-code-line {
-    font-size: 15px;
-}
-
-.dp-code .remark-code-line {
-    font-size: 22px;
+.diff-code pre,
+.diff-code pre code,
+.diff-code code {
+    font-size: 14px !important;
 }
 
 .bottomBar{
@@ -170,17 +171,6 @@ h1, h2, h3 {
     width:100%;
 }
 
-.remark-slide-content{
-    background-image: url('../images/background2.png');
-    background-repeat:no-repeat;
-    background-size:contain;
-    background-position:center;
-    color:#333;
-    padding-top: 100px;
-
-
-}
-
 .intro p{
     color:#fff;
 
@@ -192,11 +182,6 @@ h1, h2, h3 {
     background-repeat: no-repeat;
     color:#fff;
     font-size:20px;
-}
-
-.remark-slide-number{
-    bottom: 20px;
-    color:#fff;
 }
 
 p{
@@ -342,27 +327,6 @@ tr:nth-child(2n-1) td {
   background-color: #f2f2f2;
 }
 
-.flag-true{
-  width:15px;
-  height:15px;
-  background:url(remark-templates/3mdeb-trainings-template/images/accept.svg);
-  margin-left:auto;
-  margin-right:auto;
-  background-size:8px auto;
-  background-position:center center;
-  background-repeat:no-repeat;
-}
-
-.flag-false{
-  margin-left:auto;
-  margin-right:auto;
-  width:15px;
-  height:15px;
-  background:url(remark-templates/3mdeb-trainings-template/images/close.svg);
-  background-size:8px auto;
-  background-position:center center;
-  background-repeat:no-repeat;
-}
 h4{
   font-size:12px;
 }
@@ -399,21 +363,6 @@ li {
     width: 20em;
     margin-top: -2em;
     margin-left: -2em;
-}
-
-@page {
-  size: 908px 681px;
-  margin: 0;
-}
-
-@media print {
-  .remark-slide-scaler {
-    width: 100% !important;
-    height: 100% !important;
-    transform: scale(1) !important;
-    top: 0 !important;
-    left: 0 !important;
-  }
 }
 
 .code-comment{

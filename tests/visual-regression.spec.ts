@@ -114,3 +114,15 @@ test.describe('Presenter Mode', () => {
     });
   });
 });
+
+test.describe('Font Size Classes', () => {
+  test('code-10px and code-12px apply correctly', async ({ page }) => {
+    await page.goto('/13'); // Font Size Classes slide
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+    await expect(page).toHaveScreenshot('font-size-classes.png', {
+      maxDiffPixelRatio: 0.01,
+      fullPage: true,
+    });
+  });
+});

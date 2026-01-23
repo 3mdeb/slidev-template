@@ -88,11 +88,11 @@ Figure styling is defined in theme/styles/slides.css
 
 # Footnotes Component
 
-This slide tests the custom Footnotes component.[^1]
+This slide tests the custom Footnotes component.<sup>1</sup>
 
-Another point with a footnote.[^2]
+Another point with a footnote.<sup>2</sup>
 
-<Footnotes separator>
+<Footnotes separator x="l" y="col">
   <Footnote :number=1>First footnote reference - Footnotes.vue component</Footnote>
   <Footnote :number=2>Second footnote reference - tests numbering</Footnote>
 </Footnotes>

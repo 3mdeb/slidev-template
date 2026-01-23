@@ -12,3 +12,5 @@ output
 tmp.*
 slides
 core
+playwright-report/
+test-results/

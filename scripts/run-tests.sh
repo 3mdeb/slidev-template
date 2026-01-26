@@ -133,7 +133,11 @@ start_dev_server() {
   print_info "Starting dev server on port $SLIDEV_PORT..."
 
   # Start dev server in background container
-  # Matches render-slides.sh: npm run dev slides.md -- -o false -p 8000 --remote --force
+  # Note: Cannot use render-slides.sh here because:
+  # - render-slides.sh runs interactively (-it) and blocks
+  # - We need detached mode (-d) for automated test execution
+  # - We need a named container for cleanup via trap handler
+  # For interactive use, start_dev_server_interactive() delegates to render-slides.sh
   docker run -d --rm \
     --name "$DEV_CONTAINER_NAME" \
     --user "$(id -u):$(id -g)" \

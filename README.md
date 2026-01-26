@@ -119,3 +119,20 @@ COPYRIGHT="All Rights Reserved by 3mdeb Sp. z o.o." \
 ```
 
 Default copyright is `3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0`.
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `COPYRIGHT` | `3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0` | Copyright string for slide footer |
+| `SLIDEV_PORT` | `8000` | Port for development server |
+| `SLIDEV_NODE_MAX_OLD_SPACE` | `4096` | Node.js max heap size in MB |
+| `SLIDES_TITLE` | `3mdeb Presentation` | Presentation title |
+| `PLAYWRIGHT_IMAGE` | `mcr.microsoft.com/playwright:v1.57.0-noble` | Docker image for Slidev operations |
+
+Example overriding multiple variables:
+
+```bash
+SLIDEV_PORT=8080 PLAYWRIGHT_IMAGE=mcr.microsoft.com/playwright:v1.50.0-noble \
+  ./slidev-template/scripts/render-slides.sh slides.md
+```

@@ -1,6 +1,9 @@
 #!/bin/bash
 # Generate cheatsheet based on YAML input
 
+# Container image used for Slidev operations (keep in sync with run-tests.sh)
+PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.57.0-noble}"
+
 render_slides() {
     local day
     local escaped_file
@@ -75,7 +78,7 @@ PY
       -v "$PWD:/repo" \
       -p "$slidev_port":8000 \
       -e NODE_OPTIONS=--max-old-space-size="$node_max_old_space" \
-          mcr.microsoft.com/playwright:v1.57.0-noble \
+      "$PLAYWRIGHT_IMAGE" \
       bash -c "cd /repo/slidev-template && npm run dev slides.md -- -o false -p 8000 --remote --force"
 
     # Clean up temporary markdown file
@@ -86,7 +89,7 @@ PY
 check_dependencies() {
   docker run -it --rm --user $(id -u):$(id -g) \
     -v "$PWD:/repo" \
-    mcr.microsoft.com/playwright:v1.57.0-noble \
+    "$PLAYWRIGHT_IMAGE" \
     bash -c "cd /repo/slidev-template && npm install"
   return $?
 }

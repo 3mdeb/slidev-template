@@ -23,6 +23,9 @@ SLIDEV_PORT="${SLIDEV_PORT:-8000}"
 DEV_SERVER_PID=""
 DEV_CONTAINER_NAME="slidev-test-server-$$"
 
+# Container image used for Slidev operations (keep in sync with render-slides.sh)
+PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.57.0-noble}"
+
 print_error() {
   echo -e "\033[31mERROR: $1\033[0m"
 }
@@ -137,7 +140,7 @@ start_dev_server() {
     -v "$TEST_REPO_DIR:/repo" \
     -p "$SLIDEV_PORT:8000" \
     -e NODE_OPTIONS="--max-old-space-size=$node_max_old_space" \
-    mcr.microsoft.com/playwright:v1.57.0-noble \
+    "$PLAYWRIGHT_IMAGE" \
     bash -c "cd /repo/slidev-template && npm install --silent && npm run dev slides.md -- -o false -p 8000 --remote --force" \
     > /dev/null
 
@@ -166,7 +169,7 @@ run_tests() {
     -v "$TEMPLATE_DIR:/repo" \
     --network host \
     -e SLIDEV_BASE_URL="http://localhost:$SLIDEV_PORT" \
-    mcr.microsoft.com/playwright:v1.57.0-noble \
+    "$PLAYWRIGHT_IMAGE" \
     bash -c "cd /repo && npm install --silent && node node_modules/@playwright/test/cli.js test $test_args"
 }
 

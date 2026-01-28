@@ -23,8 +23,7 @@ SLIDEV_PORT="${SLIDEV_PORT:-8000}"
 DEV_SERVER_PID=""
 DEV_CONTAINER_NAME="slidev-test-server-$$"
 
-# Container image used for Slidev operations (keep in sync with render-slides.sh)
-PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.57.0-noble}"
+source "${SCRIPT_DIR}/env.sh"
 
 print_error() {
   echo -e "\033[31mERROR: $1\033[0m"

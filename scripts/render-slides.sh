@@ -1,8 +1,9 @@
 #!/bin/bash
 # Generate cheatsheet based on YAML input
 
-# Container image used for Slidev operations (keep in sync with run-tests.sh)
-PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.57.0-noble}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "${SCRIPT_DIR}/env.sh"
 
 render_slides() {
     local day

@@ -3,6 +3,10 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "${SCRIPT_DIR}/../env.sh"
+
 gen_slides() {
     local day
     local escaped_file
@@ -59,7 +63,7 @@ gen_slides() {
           docker run -it --rm --user $(id -u):$(id -g) \
             -v "$PWD:/repo" \
             -e NODE_OPTIONS=--max-old-space-size="$node_max_old_space" \
-            mcr.microsoft.com/playwright:v1.57.0-noble \
+            "$PLAYWRIGHT_IMAGE" \
             bash -c "
               cd /repo/slidev-template && npm run export slides.md -- \
                 --range $range --output output/$output_file -c
@@ -79,7 +83,7 @@ check_dependencies() {
   if [ -n "$USE_DOCKER" ]; then
     docker run -it --rm --user $(id -u):$(id -g) \
       -v "$PWD:/repo" \
-      mcr.microsoft.com/playwright:v1.57.0-noble \
+      "$PLAYWRIGHT_IMAGE" \
       bash -c "cd /repo/slidev-template && npm install"
   else
     cd slidev-template && npm install && cd ..

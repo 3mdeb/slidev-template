@@ -1,20 +1,20 @@
+/**
+ * Broken fixture: HMR disabled.
+ *
+ * This vite.config.ts is identical to the real one except hmr is set to false,
+ * which prevents Vite from pushing file changes to the browser via WebSocket.
+ * The HMR test should FAIL when this config is used.
+ */
 import { defineConfig } from 'vite';
 import MdItAdmon from 'markdown-it-admon';
 
 export default defineConfig({
   server: {
-    // make the dev server listen on all network interfaces
-    host: true,              // or '0.0.0.0'
-    // all hosts are allowed
+    host: true,
     allowedHosts: true,
     fs: { strict: false },
-    hmr: {
-      overlay: false,
-    },
+    hmr: false,
     watch: {
-      // Let Vite auto-detect polling mode.
-      // Explicitly setting usePolling: false breaks HMR on Docker Desktop
-      // (macOS/Windows) and NFS mounts where inotify events don't propagate.
       ignored: ['**/slides/tools/**', '**/slides/slidev-template/**'],
     },
   },
@@ -34,16 +34,11 @@ export default defineConfig({
     exclude: ['@slidev/cli'],
   },
   slidev: {
-    vue: {
-      /* vue options */
-    },
+    vue: {},
     markdown: {
-      /* markdown-it options */
       markdownItSetup(md) {
-        /* custom markdown-it plugins */
         md.use(MdItAdmon);
       },
     },
   },
 });
-

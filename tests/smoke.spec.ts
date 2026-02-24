@@ -53,8 +53,8 @@ test.describe('Dev Server', () => {
 
 test.describe('Navigation', () => {
   test('all slides load without OOM', async ({ page }) => {
-    // 13 slides: 1 cover + 12 from test-slides.md
-    for (let i = 1; i <= 13; i++) {
+    // 14 slides: 1 cover + 13 from test-slides.md
+    for (let i = 1; i <= 14; i++) {
       await page.goto(`/${i}`);
       await page.waitForLoadState('networkidle', { timeout: 15000 });
       expect(await page.textContent('body')).toBeTruthy();
@@ -85,5 +85,43 @@ test.describe('Assets', () => {
       ).length;
     });
     expect(brokenImages).toBe(0);
+  });
+});
+
+test.describe('Keyboard Navigation', () => {
+  test('vim keys navigate slides (h/l)', async ({ page }) => {
+    await page.goto('/1');
+    await page.waitForLoadState('networkidle');
+    // Ensure page has focus for keyboard events
+    await page.click('body');
+    await page.waitForTimeout(200);
+
+    // Navigate forward with 'l'
+    await page.keyboard.press('l');
+    await page.waitForTimeout(500);
+    expect(page.url()).toContain('/2');
+
+    // Navigate backward with 'h'
+    await page.keyboard.press('h');
+    await page.waitForTimeout(500);
+    expect(page.url()).toContain('/1');
+  });
+
+  test('vim keys navigate slides (j/k)', async ({ page }) => {
+    await page.goto('/1');
+    await page.waitForLoadState('networkidle');
+    // Ensure page has focus for keyboard events
+    await page.click('body');
+    await page.waitForTimeout(200);
+
+    // Navigate forward with 'j'
+    await page.keyboard.press('j');
+    await page.waitForTimeout(500);
+    expect(page.url()).toContain('/2');
+
+    // Navigate backward with 'k'
+    await page.keyboard.press('k');
+    await page.waitForTimeout(500);
+    expect(page.url()).toContain('/1');
   });
 });

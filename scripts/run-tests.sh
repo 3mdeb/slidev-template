@@ -268,8 +268,10 @@ run_tests() {
   docker run --rm \
     --user "$(id -u):$(id -g)" \
     -v "$TEMPLATE_DIR:/repo" \
+    -v "$TEST_REPO_DIR:/test-repo" \
     --network host \
     -e SLIDEV_BASE_URL="http://localhost:$SLIDEV_PORT" \
+    -e TEST_REPO_DIR=/test-repo \
     "$PLAYWRIGHT_IMAGE" \
     bash -c "cd /repo && npm install --silent && node node_modules/@playwright/test/cli.js test $test_args"
 }

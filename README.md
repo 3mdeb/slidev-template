@@ -120,6 +120,7 @@ COPYRIGHT="All Rights Reserved by 3mdeb Sp. z o.o." \
 
 Default copyright is `3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0`.
 
+
 ## Environment Variables
 
 | Variable | Default | Description |
@@ -135,4 +136,102 @@ Example overriding multiple variables:
 ```bash
 SLIDEV_PORT=8080 PLAYWRIGHT_IMAGE=mcr.microsoft.com/playwright:v1.50.0-noble \
   ./slidev-template/scripts/render-slides.sh slides.md
+```
+
+## Testing
+
+Visual regression and smoke tests use Playwright to verify template rendering.
+Tests run entirely in Docker containers for consistent results.
+
+### Quick Start
+
+```sh
+# Run all tests (single command - starts server, runs tests, cleans up)
+./scripts/run-tests.sh
+
+# Or use a specific port
+SLIDEV_PORT=8002 ./scripts/run-tests.sh
+```
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `./scripts/run-tests.sh` | Run all tests (default) |
+| `./scripts/run-tests.sh test` | Same as above |
+| `./scripts/run-tests.sh update` | Update visual regression baselines |
+| `./scripts/run-tests.sh dev` | Start dev server for manual testing |
+| `./scripts/run-tests.sh clean` | Remove test artifacts and containers |
+
+### Developer Workflow
+
+1. **Make changes** to theme, layouts, or components
+2. **Run tests** to verify nothing broke:
+   ```sh
+   ./scripts/run-tests.sh
+   ```
+3. **If visual changes are intentional**, update baselines:
+   ```sh
+   ./scripts/run-tests.sh update
+   ```
+4. **Review baseline changes** in `tests/visual-regression.spec.ts-snapshots/`
+5. **Commit** both code changes and updated baselines
+
+### Manual Browser Testing
+
+For debugging or exploratory testing:
+
+```sh
+# Start dev server (keeps running until Ctrl+C)
+./scripts/run-tests.sh dev
+
+# Open in browser
+# http://localhost:8000     - Slide view
+# http://localhost:8000/presenter/1  - Presenter mode
+# http://localhost:8000/overview     - Overview mode
+```
+
+### Test Coverage
+
+Tests verify production-used features based on real presentation analysis:
+
+**Layouts tested:**
+- `cover` (100+ uses in production)
+- `two-cols` (19 uses)
+- `two-cols-header` (6 uses)
+- `quote` (1 use)
+
+**Components tested:**
+- Footer (global-top.vue) - visibility on cover vs content slides
+- Footnotes component
+- Figure/figcaption styling
+- Tables with inline styles
+- Speaker notes (hidden in slides, visible in presenter)
+
+### Test Structure
+
+| File | Purpose |
+|------|---------|
+| `tests/fixtures/test-slides.md` | Sample slides for all layouts |
+| `tests/smoke.spec.ts` | Basic functionality (server, navigation, assets) |
+| `tests/visual-regression.spec.ts` | Screenshot comparison for layouts/components |
+| `playwright.config.ts` | Test configuration |
+| `scripts/run-tests.sh` | Container-based test runner |
+| `tests/*.spec.ts-snapshots/` | Baseline screenshots (commit these) |
+
+## Features
+
+A set of common styles we should be following.
+
+### Images
+
+Use `figure` class, and `figcaption` class if image comes from an external source.
+
+```
+<figure>
+  <img src="/@fs/repo/img/arch5141/bsf_uefi_event_log.png" width="800px">
+  <figcaption>
+    "Building Secure Firmware", Jiewen Yao, Vincent Zimmer, 2020
+  </figcaption>
+</figure>
 ```

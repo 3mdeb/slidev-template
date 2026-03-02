@@ -67,10 +67,10 @@ Commands:
   update       Update screenshot baselines - starts server automatically
   dev          Start dev server only (for manual testing)
   clean        Remove test repo and worktree
-  broken       Prove all fixture-breakable tests detect regressions (12 tests)
+  broken       Prove all fixture-breakable tests detect regressions (13 tests)
   broken NAME  Prove specific test detects regressions
 
-Available broken fixture tests (12):
+Available broken fixture tests (13):
   src-directive    - "src: directive renders content"
   images           - "images load without errors"
   cover            - "Layouts › cover"
@@ -83,6 +83,7 @@ Available broken fixture tests (12):
   footer-visible   - "Footer › visible on content slides"
   footer-hidden    - "Footer › hidden on cover slides"
   hmr              - "HMR › slide content updates after file change"
+  plantuml         - "Diagrams › PlantUML diagram renders via Kroki"
 
 Tests not fixture-breakable (6):
   - "responds on configured port" (tests server response)
@@ -176,6 +177,10 @@ setup_test_repo() {
       print_warning "Breaking: Disabling HMR in vite.config.ts"
       cp "$TEMPLATE_DIR/tests/fixtures/test-slides.md" "$TEST_REPO_DIR/"
       cp "$TEMPLATE_DIR/tests/fixtures/broken/vite-config-hmr-disabled.ts" "$WORKTREE_DIR/vite.config.ts"
+      ;;
+    plantuml)
+      print_warning "Breaking: PlantUML diagram removed"
+      cp "$TEMPLATE_DIR/tests/fixtures/broken/test-slides-no-plantuml.md" "$TEST_REPO_DIR/test-slides.md"
       ;;
     "")
       cp "$TEMPLATE_DIR/tests/fixtures/test-slides.md" "$TEST_REPO_DIR/"
@@ -334,6 +339,7 @@ get_test_pattern() {
     footer-visible)   echo "visible on content slides" ;;
     footer-hidden)    echo "hidden on cover slides" ;;
     hmr)              echo "slide content updates after file change" ;;
+    plantuml)         echo "PlantUML diagram renders" ;;
     *)                echo "" ;;
   esac
 }
@@ -393,6 +399,7 @@ BROKEN_FIXTURES=(
   "footer-visible"
   "footer-hidden"
   "hmr"
+  "plantuml"
 )
 
 # Run all broken tests

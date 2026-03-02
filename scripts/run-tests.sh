@@ -52,6 +52,8 @@ cleanup() {
   # Stop dev server container if running
   docker stop "$DEV_CONTAINER_NAME" 2>/dev/null || true
   docker rm "$DEV_CONTAINER_NAME" 2>/dev/null || true
+  # Stop Kroki service
+  docker compose -f "$TEMPLATE_DIR/docker-compose.yml" down 2>/dev/null || true
 }
 
 trap cleanup EXIT
@@ -230,6 +232,9 @@ start_dev_server() {
 
   print_info "Starting dev server on port $SLIDEV_PORT..."
 
+  # Start Kroki service for PlantUML rendering
+  docker compose -f "$TEMPLATE_DIR/docker-compose.yml" up -d
+
   # Start dev server in background container
   # Note: Cannot use render-slides.sh here because:
   # - render-slides.sh runs interactively (-it) and blocks
@@ -241,6 +246,7 @@ start_dev_server() {
     --user "$(id -u):$(id -g)" \
     -v "$TEST_REPO_DIR:/repo" \
     -p "$SLIDEV_PORT:8000" \
+    --network slidev \
     -e NODE_OPTIONS="--max-old-space-size=$node_max_old_space" \
     "$PLAYWRIGHT_IMAGE" \
     bash -c "cd /repo/slidev-template && npm install --silent && npm run dev slides.md -- -o false -p 8000 --remote --force" \

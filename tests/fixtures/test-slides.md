@@ -188,6 +188,19 @@ echo "Standard code block"
 Testing `.code-10px` and `.code-12px` CSS classes for code blocks.
 
 ---
+
+# PlantUML Diagram
+
+```plantuml
+@startuml
+Bob -> Alice : hello
+Alice -> Bob : hi
+@enduml
+```
+
+Testing PlantUML rendering via Kroki service.
+
+---
 layout: cover
 background: /intro.png
 ---

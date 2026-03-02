@@ -25,6 +25,12 @@ export default defineConfig({
       interval: 1000,
       ignored: ['**/slides/tools/**', '**/slides/slidev-template/**'],
     },
+    proxy: {
+      '/plantuml': {
+        target: 'http://kroki:8000',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     chunkSizeWarningLimit: 1000,

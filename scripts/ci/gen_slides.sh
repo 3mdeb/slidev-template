@@ -20,6 +20,11 @@ gen_slides() {
     local output_file
     local title
 
+    # Start Kroki service for PlantUML rendering (if using Docker)
+    if [ -n "$USE_DOCKER" ]; then
+      docker compose -f slidev-template/docker-compose.yml up -d
+    fi
+
     # Extract slide information from YAML using yq with pipe as a separator
     IFS=$'\n' # Set Internal Field Separator to newline for reading line by line
     for entry in $(yq -r '.slides[] | [.input_file, .range, .output_file] | join("|")' "$1"); do
@@ -62,6 +67,7 @@ gen_slides() {
         if [ -n "$USE_DOCKER" ]; then
           docker run -it --rm --user $(id -u):$(id -g) \
             -v "$PWD:/repo" \
+            --network slidev \
             -e NODE_OPTIONS=--max-old-space-size="$node_max_old_space" \
             "$PLAYWRIGHT_IMAGE" \
             bash -c "
@@ -77,6 +83,11 @@ gen_slides() {
         # Clean up temporary markdown file
         rm slidev-template/slides.md
     done
+
+    # Stop Kroki service
+    if [ -n "$USE_DOCKER" ]; then
+      docker compose -f slidev-template/docker-compose.yml down
+    fi
 }
 
 check_dependencies() {

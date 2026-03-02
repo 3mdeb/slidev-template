@@ -25,7 +25,8 @@
         "mono": "Fira Code",
         "sans": "Avenir Next,Nunito Sans",
         "local": "Avenir Next"
-      }
+      },
+      "plantUmlServer": "/plantuml"
     }
   },
   "dependencies": {

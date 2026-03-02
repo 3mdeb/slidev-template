@@ -75,12 +75,19 @@ PY
       fi
     fi
 
+    # Start Kroki service for PlantUML rendering
+    docker compose -f slidev-template/docker-compose.yml up -d
+
     docker run -it --rm --user $(id -u):$(id -g) \
       -v "$PWD:/repo" \
       -p "$slidev_port":8000 \
+      --network slidev \
       -e NODE_OPTIONS="--max-old-space-size=$node_max_old_space --expose-gc" \
       "$PLAYWRIGHT_IMAGE" \
       bash -c "cd /repo/slidev-template && npm run dev slides.md -- -o false -p 8000 --remote --force"
+
+    # Stop Kroki service
+    docker compose -f slidev-template/docker-compose.yml down
 
     # Clean up temporary markdown file
     rm slidev-template/slides.md

@@ -1,0 +1,9 @@
+services:
+  kroki:
+    image: yuzutech/kroki:0.29.1
+    networks:
+      - slidev
+
+networks:
+  slidev:
+    name: slidev

@@ -53,8 +53,8 @@ test.describe('Dev Server', () => {
 
 test.describe('Navigation', () => {
   test('all slides load without OOM', async ({ page }) => {
-    // 14 slides: 1 cover + 13 from test-slides.md
-    for (let i = 1; i <= 14; i++) {
+    // 15 slides: 1 cover + 14 from test-slides.md
+    for (let i = 1; i <= 15; i++) {
       await page.goto(`/${i}`);
       await page.waitForLoadState('networkidle', { timeout: 15000 });
       expect(await page.textContent('body')).toBeTruthy();
@@ -85,6 +85,24 @@ test.describe('Assets', () => {
       ).length;
     });
     expect(brokenImages).toBe(0);
+  });
+});
+
+test.describe('Diagrams', () => {
+  test('PlantUML diagram renders via Kroki', async ({ page }) => {
+    await page.goto('/14');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
+
+    // PlantUML renders as an <img> with an SVG from the PlantUML server
+    const plantumlImg = page.locator('img[src*="plantuml"]');
+    await expect(plantumlImg).toBeVisible({ timeout: 10000 });
+
+    // Verify the image loaded successfully
+    const isLoaded = await plantumlImg.evaluate(
+      (img: HTMLImageElement) => img.complete && img.naturalHeight > 0
+    );
+    expect(isLoaded).toBe(true);
   });
 });
 

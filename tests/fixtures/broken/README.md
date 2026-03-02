@@ -14,7 +14,7 @@ Most fixtures use Slidev's `src:` frontmatter with hash range notation to
 minimize duplication - they import unchanged slides from `base-slides.md`
 and only inline the specific slide that needs to be broken.
 
-## Available Fixtures (12)
+## Available Fixtures (13)
 
 | Fixture File | Breaks Test | What's Broken |
 |--------------|-------------|---------------|
@@ -30,6 +30,7 @@ and only inline the specific slide that needs to be broken.
 | `test-slides-no-footer-visible.md` | Footer › visible | Slide 2 uses cover (hides footer) |
 | `test-slides-footer-on-cover.md` | Footer › hidden | Cover slide uses default (shows footer) |
 | `vite-config-hmr-disabled.ts` | HMR › slide content updates | `hmr: false` in vite.config.ts |
+| `test-slides-no-plantuml.md` | Diagrams › PlantUML | PlantUML diagram removed, replaced with plain text |
 
 ## Tests Not Fixture-Breakable (6)
 

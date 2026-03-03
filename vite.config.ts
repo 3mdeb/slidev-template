@@ -12,9 +12,12 @@ export default defineConfig({
       overlay: false,
     },
     watch: {
-      // Let Vite auto-detect polling mode.
-      // Explicitly setting usePolling: false breaks HMR on Docker Desktop
-      // (macOS/Windows) and NFS mounts where inotify events don't propagate.
+      // Disable symlink traversal so chokidar reports canonical paths.
+      // The `slides -> ..` symlink causes chokidar to report changes as
+      // e.g. /repo/slidev-template/slides/pages/file.md, but Slidev's
+      // HMR watchFiles map uses the canonical /repo/pages/file.md.
+      // This mismatch silently breaks HMR for src:-included external files.
+      followSymlinks: false,
       ignored: ['**/slides/tools/**', '**/slides/slidev-template/**'],
     },
   },

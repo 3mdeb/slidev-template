@@ -343,26 +343,24 @@ run_single_broken_test() {
     return 1
   fi
 
-  echo ""
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_info "Testing: $fixture → \"$test_pattern\""
-  print_info "═══════════════════════════════════════════════════════════════"
-
-  # Clean and setup with broken fixture
-  clean_test_repo 2>/dev/null || true
+  # Clean and setup with broken fixture (quiet — only show output on error)
+  clean_test_repo >/dev/null 2>&1 || true
   BROKEN_FEATURE="$fixture"
-  start_dev_server
+  start_dev_server >/dev/null 2>&1
 
-  # Run the specific test
-  print_info "Running test with broken fixture..."
-  if run_tests "--grep '$test_pattern'" 2>&1; then
-    print_error "✗ FAIL: Test PASSED but should have FAILED"
-    print_error "  Test does NOT detect regressions!"
+  # Run the specific test, capturing output
+  local test_output
+  test_output=$(mktemp)
+  if run_tests "--grep '$test_pattern'" >"$test_output" 2>&1; then
+    print_error "✗ FAIL: $fixture — test PASSED but should have FAILED"
+    cat "$test_output"
+    rm -f "$test_output"
     stop_dev_server
     clean_test_repo 2>/dev/null || true
     return 1
   else
-    print_success "✓ PASS: Test correctly FAILED when $fixture was broken"
+    print_success "✓ $fixture"
+    rm -f "$test_output"
     stop_dev_server
     clean_test_repo 2>/dev/null || true
   fi
@@ -397,10 +395,8 @@ run_all_broken_tests() {
   local failed=0
   local failed_tests=()
 
+  print_info "Running ${#BROKEN_FIXTURES[@]} broken fixture tests..."
   echo ""
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_info "Running ALL broken fixture tests (${#BROKEN_FIXTURES[@]} tests)"
-  print_info "═══════════════════════════════════════════════════════════════"
 
   for fixture in "${BROKEN_FIXTURES[@]}"; do
     if run_single_broken_test "$fixture"; then
@@ -412,17 +408,11 @@ run_all_broken_tests() {
   done
 
   echo ""
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_info "SUMMARY"
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_success "Passed: $passed"
   if [ $failed -gt 0 ]; then
-    print_error "Failed: $failed"
-    print_error "Failed tests: ${failed_tests[*]}"
+    print_error "$passed passed, $failed failed: ${failed_tests[*]}"
     exit 1
   fi
-  echo ""
-  print_success "PROOF COMPLETE: All $passed tests detect regressions ✓"
+  print_success "All $passed broken fixture tests passed ✓"
 }
 
 # Run regression proof tests
@@ -430,10 +420,7 @@ run_broken_tests() {
   local specific_test="${1:-}"
 
   if [ -n "$specific_test" ]; then
-    if run_single_broken_test "$specific_test"; then
-      echo ""
-      print_success "PROOF COMPLETE: $specific_test test detects regressions ✓"
-    else
+    if ! run_single_broken_test "$specific_test"; then
       exit 1
     fi
   else

@@ -65,10 +65,10 @@ Commands:
   update       Update screenshot baselines - starts server automatically
   dev          Start dev server only (for manual testing)
   clean        Remove test repo and worktree
-  broken       Prove all fixture-breakable tests detect regressions (11 tests)
+  broken       Prove all fixture-breakable tests detect regressions (12 tests)
   broken NAME  Prove specific test detects regressions
 
-Available broken fixture tests (11):
+Available broken fixture tests (12):
   src-directive    - "src: directive renders content"
   images           - "images load without errors"
   cover            - "Layouts › cover"
@@ -80,6 +80,7 @@ Available broken fixture tests (11):
   table            - "Components › table"
   footer-visible   - "Footer › visible on content slides"
   footer-hidden    - "Footer › hidden on cover slides"
+  hmr              - "HMR › slide content updates after file change"
 
 Tests not fixture-breakable (6):
   - "responds on configured port" (tests server response)
@@ -168,6 +169,11 @@ setup_test_repo() {
     footer-hidden)
       print_warning "Breaking: Using default layout on cover slide (shows footer)"
       cp "$TEMPLATE_DIR/tests/fixtures/broken/test-slides-footer-on-cover.md" "$TEST_REPO_DIR/test-slides.md"
+      ;;
+    hmr)
+      print_warning "Breaking: Disabling HMR in vite.config.ts"
+      cp "$TEMPLATE_DIR/tests/fixtures/test-slides.md" "$TEST_REPO_DIR/"
+      cp "$TEMPLATE_DIR/tests/fixtures/broken/vite-config-hmr-disabled.ts" "$WORKTREE_DIR/vite.config.ts"
       ;;
     "")
       cp "$TEMPLATE_DIR/tests/fixtures/test-slides.md" "$TEST_REPO_DIR/"
@@ -268,8 +274,10 @@ run_tests() {
   docker run --rm \
     --user "$(id -u):$(id -g)" \
     -v "$TEMPLATE_DIR:/repo" \
+    -v "$TEST_REPO_DIR:/test-repo" \
     --network host \
     -e SLIDEV_BASE_URL="http://localhost:$SLIDEV_PORT" \
+    -e TEST_REPO_DIR=/test-repo \
     "$PLAYWRIGHT_IMAGE" \
     bash -c "cd /repo && npm install --silent && node node_modules/@playwright/test/cli.js test $test_args"
 }
@@ -319,6 +327,7 @@ get_test_pattern() {
     table)            echo "Components.*table" ;;
     footer-visible)   echo "visible on content slides" ;;
     footer-hidden)    echo "hidden on cover slides" ;;
+    hmr)              echo "slide content updates after file change" ;;
     *)                echo "" ;;
   esac
 }
@@ -334,26 +343,26 @@ run_single_broken_test() {
     return 1
   fi
 
-  echo ""
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_info "Testing: $fixture → \"$test_pattern\""
-  print_info "═══════════════════════════════════════════════════════════════"
-
-  # Clean and setup with broken fixture
-  clean_test_repo 2>/dev/null || true
+  # Clean and setup with broken fixture (quiet — only show output on error)
+  clean_test_repo >/dev/null 2>&1 || true
   BROKEN_FEATURE="$fixture"
-  start_dev_server
+  start_dev_server >/dev/null 2>&1
 
-  # Run the specific test
-  print_info "Running test with broken fixture..."
-  if run_tests "--grep '$test_pattern'" 2>&1; then
-    print_error "✗ FAIL: Test PASSED but should have FAILED"
-    print_error "  Test does NOT detect regressions!"
+  # Run the specific test, capturing output
+  local test_output
+  test_output=$(mktemp)
+  if run_tests "--grep '$test_pattern'" >"$test_output" 2>&1; then
+    print_error "✗ FAIL: $fixture — test PASSED but should have FAILED"
+    cat "$test_output"
+    rm -f "$test_output"
     stop_dev_server
+    clean_test_repo 2>/dev/null || true
     return 1
   else
-    print_success "✓ PASS: Test correctly FAILED when $fixture was broken"
+    print_success "✓ $fixture"
+    rm -f "$test_output"
     stop_dev_server
+    clean_test_repo 2>/dev/null || true
   fi
 
   return 0
@@ -377,6 +386,7 @@ BROKEN_FIXTURES=(
   "table"
   "footer-visible"
   "footer-hidden"
+  "hmr"
 )
 
 # Run all broken tests
@@ -385,10 +395,8 @@ run_all_broken_tests() {
   local failed=0
   local failed_tests=()
 
+  print_info "Running ${#BROKEN_FIXTURES[@]} broken fixture tests..."
   echo ""
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_info "Running ALL broken fixture tests (${#BROKEN_FIXTURES[@]} tests)"
-  print_info "═══════════════════════════════════════════════════════════════"
 
   for fixture in "${BROKEN_FIXTURES[@]}"; do
     if run_single_broken_test "$fixture"; then
@@ -400,17 +408,11 @@ run_all_broken_tests() {
   done
 
   echo ""
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_info "SUMMARY"
-  print_info "═══════════════════════════════════════════════════════════════"
-  print_success "Passed: $passed"
   if [ $failed -gt 0 ]; then
-    print_error "Failed: $failed"
-    print_error "Failed tests: ${failed_tests[*]}"
+    print_error "$passed passed, $failed failed: ${failed_tests[*]}"
     exit 1
   fi
-  echo ""
-  print_success "PROOF COMPLETE: All $passed tests detect regressions ✓"
+  print_success "All $passed broken fixture tests passed ✓"
 }
 
 # Run regression proof tests
@@ -418,10 +420,7 @@ run_broken_tests() {
   local specific_test="${1:-}"
 
   if [ -n "$specific_test" ]; then
-    if run_single_broken_test "$specific_test"; then
-      echo ""
-      print_success "PROOF COMPLETE: $specific_test test detects regressions ✓"
-    else
+    if ! run_single_broken_test "$specific_test"; then
       exit 1
     fi
   else

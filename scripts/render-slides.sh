@@ -78,7 +78,7 @@ PY
     docker run -it --rm --user $(id -u):$(id -g) \
       -v "$PWD:/repo" \
       -p "$slidev_port":8000 \
-      -e NODE_OPTIONS=--max-old-space-size="$node_max_old_space" \
+      -e NODE_OPTIONS="--max-old-space-size=$node_max_old_space --expose-gc" \
       "$PLAYWRIGHT_IMAGE" \
       bash -c "cd /repo/slidev-template && npm run dev slides.md -- -o false -p 8000 --remote --force"
 

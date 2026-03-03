@@ -18,6 +18,11 @@ export default defineConfig({
       // HMR watchFiles map uses the canonical /repo/pages/file.md.
       // This mismatch silently breaks HMR for src:-included external files.
       followSymlinks: false,
+      // Use polling instead of inotify for reliable change detection in
+      // Docker bind mounts. Without polling, sed -i and git checkout
+      // replace file inodes, causing chokidar to lose its inotify watch.
+      usePolling: true,
+      interval: 1000,
       ignored: ['**/slides/tools/**', '**/slides/slidev-template/**'],
     },
   },

@@ -127,10 +127,15 @@ Options:
   -v|--verbose              Enable trace output
   -h|--help                 Print this help
 
-Environment Variables:
-  SLIDES_TITLE              Title for the presentation (default: 3mdeb Presentation)
-  SLIDEV_NODE_MAX_OLD_SPACE Node.js max old space size in MB (default: 4096)
-  COPYRIGHT                 Copyright string for footer (default: 3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0)
+Configuration:
+  The script reads .slidev.conf (shell format) from the current directory
+  if it exists. Environment variables take precedence over config file values.
+  Set SLIDEV_CONF to use a different config file path.
+
+  Supported variables (env or config):
+    SLIDES_TITLE              Title for the presentation (default: 3mdeb Presentation)
+    SLIDEV_NODE_MAX_OLD_SPACE Node.js max old space size in MB (default: 4096)
+    COPYRIGHT                 Copyright string for footer (default: 3mdeb Sp. z o.o. Licensed under the CC BY-SA 4.0)
 EOF
 }
 

@@ -160,6 +160,8 @@ SLIDEV_PORT=8002 ./scripts/run-tests.sh
 | `./scripts/run-tests.sh` | Run all tests (default) |
 | `./scripts/run-tests.sh test` | Same as above |
 | `./scripts/run-tests.sh update` | Update visual regression baselines |
+| `./scripts/run-tests.sh update PAT` | Update only baselines of tests matching PAT |
+| `./scripts/run-tests.sh broken` | Prove each test detects its regression |
 | `./scripts/run-tests.sh dev` | Start dev server for manual testing |
 | `./scripts/run-tests.sh clean` | Remove test artifacts and containers |
 
@@ -199,6 +201,7 @@ Tests verify production-used features based on real presentation analysis:
 - `cover` (100+ uses in production)
 - `two-cols` (19 uses)
 - `two-cols-header` (6 uses)
+- `two-cols-top` (defined in this template)
 - `quote` (1 use)
 
 **Components tested:**
@@ -213,6 +216,7 @@ Tests verify production-used features based on real presentation analysis:
 | File | Purpose |
 |------|---------|
 | `tests/fixtures/test-slides.md` | Sample slides for all layouts |
+| `tests/fixtures/broken/` | Intentionally broken decks that prove tests fail |
 | `tests/smoke.spec.ts` | Basic functionality (server, navigation, assets) |
 | `tests/visual-regression.spec.ts` | Screenshot comparison for layouts/components |
 | `playwright.config.ts` | Test configuration |
@@ -227,7 +231,7 @@ A set of common styles we should be following.
 
 Use `figure` class, and `figcaption` class if image comes from an external source.
 
-```
+```html
 <figure>
   <img src="/@fs/repo/img/arch5141/bsf_uefi_event_log.png" width="800px">
   <figcaption>

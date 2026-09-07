@@ -208,3 +208,29 @@ background: /intro.png
 ## Final Cover Slide
 
 Testing cover layout at end of presentation
+
+---
+layout: two-cols-top
+---
+
+# Two Columns Top
+
+::left::
+
+## Left Side
+
+Left column content, starting directly beneath the header.
+
+::right::
+
+## Right Side
+
+Right column content, separated from the left column by a gutter.
+
+::bottom::
+
+Bottom row spanning both columns, pinned to the slide bottom.
+
+<!--
+two-cols-top is a template-local layout, so it has no upstream test coverage.
+-->

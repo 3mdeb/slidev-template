@@ -53,8 +53,8 @@ test.describe('Dev Server', () => {
 
 test.describe('Navigation', () => {
   test('all slides load without OOM', async ({ page }) => {
-    // 15 slides: 1 cover + 14 from test-slides.md
-    for (let i = 1; i <= 15; i++) {
+    // 16 slides: 1 cover + 15 from test-slides.md
+    for (let i = 1; i <= 16; i++) {
       await page.goto(`/${i}`);
       await page.waitForLoadState('networkidle', { timeout: 15000 });
       expect(await page.textContent('body')).toBeTruthy();

@@ -10,6 +10,7 @@
 # Usage:
 #   ./scripts/run-tests.sh              # Run all tests
 #   ./scripts/run-tests.sh update       # Update screenshot baselines
+#   ./scripts/run-tests.sh update PAT   # Update baselines of tests matching PAT
 #   ./scripts/run-tests.sh clean        # Clean up test artifacts
 #   ./scripts/run-tests.sh broken       # Prove all tests detect regressions
 #   ./scripts/run-tests.sh broken <test> # Prove specific test detects regressions
@@ -61,23 +62,25 @@ trap cleanup EXIT
 
 usage() {
   cat <<EOF
-Usage: $(basename "$0") [test|update|dev|clean|broken [TEST_NAME]]
+Usage: $(basename "$0") [test|update [PATTERN]|dev|clean|broken [TEST_NAME]]
 
 Commands:
   test         Run Playwright tests (default) - starts server automatically
   update       Update screenshot baselines - starts server automatically
+  update PAT   Update only baselines of tests matching PAT (Playwright --grep)
   dev          Start dev server only (for manual testing)
   clean        Remove test repo and worktree
-  broken       Prove all fixture-breakable tests detect regressions (13 tests)
+  broken       Prove all fixture-breakable tests detect regressions (14 tests)
   broken NAME  Prove specific test detects regressions
   conf         Run the .slidev.conf config tests (shell only, no Docker)
 
-Available broken fixture tests (13):
+Available broken fixture tests (14):
   src-directive    - "src: directive renders content"
   images           - "images load without errors"
   cover            - "Layouts › cover"
   two-cols         - "Layouts › two-cols"
   two-cols-header  - "Layouts › two-cols-header"
+  two-cols-top     - "Layouts › two-cols-top" and its geometry assertions
   quote            - "Layouts › quote"
   figure           - "Components › figure with figcaption"
   footnotes        - "Components › Footnotes"
@@ -98,6 +101,7 @@ Tests not fixture-breakable (6):
 Examples:
   ./scripts/run-tests.sh                    # Run all tests
   ./scripts/run-tests.sh update             # Update baselines
+  ./scripts/run-tests.sh update PAT         # Update only matching baselines
   ./scripts/run-tests.sh broken             # Prove ALL tests catch regressions
   ./scripts/run-tests.sh broken footnotes   # Prove Footnotes test catches regressions
   ./scripts/run-tests.sh broken cover       # Prove cover layout test catches regressions
@@ -150,6 +154,10 @@ setup_test_repo() {
     two-cols-header)
       print_warning "Breaking: Removing two-cols-header layout"
       cp "$TEMPLATE_DIR/tests/fixtures/broken/test-slides-no-twocolsheader.md" "$TEST_REPO_DIR/test-slides.md"
+      ;;
+    two-cols-top)
+      print_warning "Breaking: two-cols-top slide moved to the built-in two-cols-header layout"
+      cp "$TEMPLATE_DIR/tests/fixtures/broken/test-slides-no-twocolstop.md" "$TEST_REPO_DIR/test-slides.md"
       ;;
     quote)
       print_warning "Breaking: Removing quote layout"
@@ -334,6 +342,7 @@ get_test_pattern() {
     cover)            echo "Layouts.*cover" ;;
     two-cols)         echo "two-cols$" ;;
     two-cols-header)  echo "two-cols-header" ;;
+    two-cols-top)     echo "two-cols-top" ;;
     quote)            echo "Layouts.*quote" ;;
     figure)           echo "figure with figcaption" ;;
     footnotes)        echo "Footnotes" ;;
@@ -365,7 +374,9 @@ run_single_broken_test() {
   # Run the specific test, capturing output
   local test_output
   test_output=$(mktemp)
-  if run_tests "--grep '$test_pattern'" >"$test_output" 2>&1; then
+  # --update-snapshots=none: a missing baseline must fail here, never be written
+  # into the baseline directory from a deliberately broken deck
+  if run_tests "--grep '$test_pattern' --update-snapshots=none" >"$test_output" 2>&1; then
     print_error "✗ FAIL: $fixture — test PASSED but should have FAILED"
     cat "$test_output"
     rm -f "$test_output"
@@ -382,7 +393,7 @@ run_single_broken_test() {
   return 0
 }
 
-# All fixture-breakable tests (11 total)
+# All fixture-breakable tests (14 total)
 # Fixtures use src: imports to minimize duplication
 # Excluded (test logic doesn't detect fixture changes):
 #   - console-error: Slidev handles invalid components gracefully
@@ -394,6 +405,7 @@ BROKEN_FIXTURES=(
   "cover"
   "two-cols"
   "two-cols-header"
+  "two-cols-top"
   "quote"
   "figure"
   "footnotes"
@@ -463,7 +475,11 @@ case "$CMD" in
     ;;
   update|update-snapshots)
     start_dev_server
-    run_tests "--update-snapshots"
+    if [ -n "$ARG2" ]; then
+      run_tests "--update-snapshots --grep '$ARG2'"
+    else
+      run_tests "--update-snapshots"
+    fi
     print_success "Baselines updated!"
     ;;
   dev)

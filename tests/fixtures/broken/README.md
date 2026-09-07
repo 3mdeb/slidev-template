@@ -14,7 +14,7 @@ Most fixtures use Slidev's `src:` frontmatter with hash range notation to
 minimize duplication - they import unchanged slides from `base-slides.md`
 and only inline the specific slide that needs to be broken.
 
-## Available Fixtures (13)
+## Available Fixtures (14)
 
 | Fixture File | Breaks Test | What's Broken |
 |--------------|-------------|---------------|
@@ -23,6 +23,7 @@ and only inline the specific slide that needs to be broken.
 | `test-slides-no-cover.md` | Layouts › cover | Cover layout removed |
 | `test-slides-no-twocols.md` | Layouts › two-cols | two-cols layout removed |
 | `test-slides-no-twocolsheader.md` | Layouts › two-cols-header | two-cols-header layout removed |
+| `test-slides-no-twocolstop.md` | Layouts › two-cols-top, two-cols-top geometry | two-cols-top slide moved to the built-in two-cols-header layout |
 | `test-slides-no-quote.md` | Layouts › quote | Quote layout removed |
 | `test-slides-no-figure.md` | Components › figure | figure/figcaption elements removed |
 | `test-slides-no-footnotes.md` | Components › Footnotes | Footnotes component removed |
@@ -73,6 +74,7 @@ These tests can't be broken by fixture changes alone:
 
 # Test specific fixture
 ./scripts/run-tests.sh broken cover
+./scripts/run-tests.sh broken two-cols-top
 ./scripts/run-tests.sh broken footnotes
 ./scripts/run-tests.sh broken table
 

@@ -1,27 +1,44 @@
 #!/bin/false
+# Shared environment for slidev-template scripts.
+#
+# Configuration precedence (highest first):
+#   1. environment variables
+#   2. .slidev.conf in the current directory (override path with SLIDEV_CONF)
+#   3. defaults below
+#
+# NOTE: this file is sourced by scripts running under `set -e`, so every code
+# path must end with a zero exit status.
 
-export PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.57.0-noble}"
+# Variables .slidev.conf may set, and that the environment may override.
+SLIDEV_CONF_VARS="COPYRIGHT SLIDES_TITLE SLIDEV_PORT SLIDEV_NODE_MAX_OLD_SPACE PLAYWRIGHT_IMAGE"
 
 # Source local project config if available (env vars take precedence)
 _slidev_load_conf() {
     local conf="${SLIDEV_CONF:-.slidev.conf}"
     [ -f "$conf" ] || return 0
 
-    # Save pre-existing env vars so they take precedence over config
-    local _had_copyright="" _had_title="" _had_port="" _had_nodemem=""
-    local _val_copyright="" _val_title="" _val_port="" _val_nodemem=""
-    [ -n "${COPYRIGHT+set}" ]                 && _had_copyright=1 _val_copyright="$COPYRIGHT"
-    [ -n "${SLIDES_TITLE+set}" ]              && _had_title=1     _val_title="$SLIDES_TITLE"
-    [ -n "${SLIDEV_PORT+set}" ]               && _had_port=1      _val_port="$SLIDEV_PORT"
-    [ -n "${SLIDEV_NODE_MAX_OLD_SPACE+set}" ] && _had_nodemem=1   _val_nodemem="$SLIDEV_NODE_MAX_OLD_SPACE"
+    # Remember which variables came from the environment, so that sourcing the
+    # config file cannot clobber them.
+    local var
+    local -a saved=()
+    for var in $SLIDEV_CONF_VARS; do
+        if [ -n "${!var+set}" ]; then
+            saved+=( "$var=${!var}" )
+        fi
+    done
 
     # shellcheck source=/dev/null
     source "$conf"
 
-    # Restore env vars that were set before sourcing
-    [ -n "$_had_copyright" ] && COPYRIGHT="$_val_copyright"
-    [ -n "$_had_title" ]     && SLIDES_TITLE="$_val_title"
-    [ -n "$_had_port" ]      && SLIDEV_PORT="$_val_port"
-    [ -n "$_had_nodemem" ]   && SLIDEV_NODE_MAX_OLD_SPACE="$_val_nodemem"
+    # Restore the environment-provided values. Plain assignment keeps the
+    # export attribute the variable already had.
+    local entry
+    for entry in "${saved[@]}"; do
+        printf -v "${entry%%=*}" '%s' "${entry#*=}"
+    done
+
+    return 0
 }
 _slidev_load_conf
+
+export PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.57.0-noble}"

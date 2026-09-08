@@ -32,6 +32,26 @@ and only inline the specific slide that needs to be broken.
 | `vite-config-hmr-disabled.ts` | HMR › slide content updates | `hmr: false` in vite.config.ts |
 | `test-slides-no-plantuml.md` | Diagrams › PlantUML | PlantUML diagram removed, replaced with plain text |
 
+## Broken `env.sh` Fixtures (4)
+
+These break the `.slidev.conf` configuration loader instead of the slide
+content, and are exercised by `scripts/test-slidev-conf.sh` rather than
+Playwright. Each one must make the listed tests fail.
+
+| Fixture File | Breaks Test | What's Broken |
+|--------------|-------------|---------------|
+| `env-no-conf.sh` | config file sets COPYRIGHT / reaches slides.md | `.slidev.conf` never read (pre-feature behaviour) |
+| `env-no-precedence.sh` | env COPYRIGHT overrides/beats config | Config clobbers environment variables |
+| `env-no-slidev-conf-var.sh` | SLIDEV_CONF selects/honours a different file | `SLIDEV_CONF` ignored, path hardcoded |
+| `env-set-e-abort.sh` | does not abort under `set -e` / gen_slides.sh survives | Loader returns non-zero, killing `set -e` callers |
+
+Run them with:
+
+```bash
+./scripts/test-slidev-conf.sh broken
+./scripts/test-slidev-conf.sh broken set-e-abort
+```
+
 ## Tests Not Fixture-Breakable (6)
 
 These tests can't be broken by fixture changes alone:
@@ -55,6 +75,9 @@ These tests can't be broken by fixture changes alone:
 ./scripts/run-tests.sh broken cover
 ./scripts/run-tests.sh broken footnotes
 ./scripts/run-tests.sh broken table
+
+# .slidev.conf tests + their regression proof (shell only, no Docker)
+./scripts/run-tests.sh conf
 ```
 
 ## Expected Output

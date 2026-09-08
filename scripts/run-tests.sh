@@ -13,6 +13,7 @@
 #   ./scripts/run-tests.sh clean        # Clean up test artifacts
 #   ./scripts/run-tests.sh broken       # Prove all tests detect regressions
 #   ./scripts/run-tests.sh broken <test> # Prove specific test detects regressions
+#   ./scripts/run-tests.sh conf         # Run .slidev.conf tests (no Docker needed)
 
 set -euo pipefail
 
@@ -69,6 +70,7 @@ Commands:
   clean        Remove test repo and worktree
   broken       Prove all fixture-breakable tests detect regressions (13 tests)
   broken NAME  Prove specific test detects regressions
+  conf         Run the .slidev.conf config tests (shell only, no Docker)
 
 Available broken fixture tests (13):
   src-directive    - "src: directive renders content"
@@ -453,6 +455,11 @@ case "$CMD" in
     ;;
   broken)
     run_broken_tests "$ARG2"
+    ;;
+  conf)
+    # Delegates to the standalone suite: it stubs Docker/npm, so it needs
+    # neither a dev server nor the test worktree this script sets up.
+    "$SCRIPT_DIR/test-slidev-conf.sh" all
     ;;
   update|update-snapshots)
     start_dev_server
